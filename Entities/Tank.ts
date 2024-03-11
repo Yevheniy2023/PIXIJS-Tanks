@@ -10,21 +10,21 @@ export class Tank {
     .drawRect(20, 20, 40, 40).endFill()
     this._container.addChild(this._view);
   }
-  public getTank(): Container {
+  public get container() : Container {
     return this._container;
   }
   public keydown = (event : any)=> {
     if(event.key === "ArrowUp") {
-      this._container.position.y -= 6;
+      this._container.position.y -= 20;
     }
     if(event.key === "ArrowDown") {
-      this._container.position.y += 6;
+      this._container.position.y += 20;
     }
     if(event.key === "ArrowLeft") {
-      this._container.position.x -= 6;
+      this._container.position.x -= 20;
     }
     if(event.key === "ArrowRight") {
-      this._container.position.x += 6;
+      this._container.position.x += 20;
     }
 }
 
