@@ -22,7 +22,7 @@ export class Walls {
       .endFill();
     this._container.addChild(this._wall);
   }
-  public getWall() {
+  public get container() {
     return this._container
   }
 }
