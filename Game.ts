@@ -1,6 +1,10 @@
 import * as PIXI from "pixi.js";
 import { Tank } from "./Entities/Tank";
 import { Walls } from "./Entities/Walls";
+import { Collision } from "./Collision";
+import { app } from "./app";
+
+export const wall3 = new Walls(400, 500, 400, 30, "red", "white", 1);
 
 export default class Game {
   private _tank: Tank;
@@ -19,6 +23,7 @@ export default class Game {
       (this._wallHor2 = new Walls(100, 250, 200, 50, "white", "blue", 2)),
       (this._wallVer1 = new Walls(1100, 300, 20, 500, "grey", "blue", 2)),
       (this._wallVer2 = new Walls(700, 300, 20, 500, "grey", "blue", 2)),
+      wall3,
     ];
 
     window.addEventListener("keydown", this._tank.keydown);
@@ -33,27 +38,29 @@ export default class Game {
     this._app.ticker.add(this.update.bind(this));
   }
 
-  isCheckCollision(entity: Tank, area: Walls) {
-    const tankBounds = entity.container.getBounds();
-    const wallBounds = area.container.getBounds();
-    return (
-      tankBounds.x < wallBounds.x + wallBounds.width &&
-      tankBounds.x + tankBounds.width > wallBounds.x &&
-      tankBounds.y < wallBounds.y + wallBounds.height &&
-      tankBounds.y + tankBounds.height > wallBounds.y
-    );
-  }
-
   update() {
     let isCollision = false;
     this._walls.forEach((wall) => {
-      if (this.isCheckCollision(this._tank, wall)) {
+      if (Collision.isCheckCollision(this._tank, wall)) {
         console.log("collision");
         this._tank.container.y = this._prevPositionTank.y;
         this._tank.container.x = this._prevPositionTank.x;
+
         isCollision = true;
       }
+
+      this._tank.bullets.forEach((bullet: any, index: number) => {
+        this._walls.forEach((wall: any, wallIndex: number) => {
+          if (Collision.isCheckCollision(bullet, wall)) {
+            console.log("bulllet colision");
+            this._tank.bullets.splice(index, 1);
+            this._walls.splice(wallIndex, 1);
+            this._app.stage.removeChild(wall.container,bullet.container);
+          }
+        });
+      });
     });
+
     if (!isCollision) {
       this._prevPositionTank = {
         x: this._tank.container.position.x,
