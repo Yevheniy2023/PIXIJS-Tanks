@@ -2,9 +2,8 @@ import * as PIXI from "pixi.js";
 import { Tank } from "./Entities/Tank";
 import { Walls } from "./Entities/Walls";
 import { Collision } from "./Collision";
-import { app } from "./app";
 
-export const wall3 = new Walls(400, 500, 400, 30, "red", "white", 1);
+export const wall3 = new Walls(400, 500, 400, 30, "red", "blue", 1, "armored");
 
 export default class Game {
   private _tank: Tank;
@@ -19,10 +18,46 @@ export default class Game {
     this._app = pixiApp;
     this._tank = new Tank();
     this._walls = [
-      (this._wallHor1 = new Walls(50, 100, 200, 50, "grey", "#0000FF", 2)),
-      (this._wallHor2 = new Walls(100, 250, 200, 50, "white", "blue", 2)),
-      (this._wallVer1 = new Walls(1100, 300, 20, 500, "grey", "blue", 2)),
-      (this._wallVer2 = new Walls(700, 300, 20, 500, "grey", "blue", 2)),
+      (this._wallHor1 = new Walls(
+        50,
+        100,
+        200,
+        50,
+        "grey",
+        "#0000FF",
+        2,
+        "light"
+      )),
+      (this._wallHor2 = new Walls(
+        100,
+        250,
+        200,
+        50,
+        "white",
+        "blue",
+        2,
+        "armored"
+      )),
+      (this._wallVer1 = new Walls(
+        1100,
+        300,
+        20,
+        500,
+        "grey",
+        "blue",
+        2,
+        "light"
+      )),
+      (this._wallVer2 = new Walls(
+        700,
+        300,
+        20,
+        500,
+        "grey",
+        "blue",
+        2,
+        "light"
+      )),
       wall3,
     ];
 
@@ -48,18 +83,33 @@ export default class Game {
 
         isCollision = true;
       }
+      
+    });
+    const armoredWalls = this._walls.filter((wall) => wall.hull === "armored");
+    const lightWalls = this._walls.filter((wall) => wall.hull === "light");
 
       this._tank.bullets.forEach((bullet: any, index: number) => {
-        this._walls.forEach((wall: any, wallIndex: number) => {
-          if (Collision.isCheckCollision(bullet, wall)) {
-            console.log("bulllet colision");
+        lightWalls.forEach((currentWall: any) => {
+          if (Collision.isCheckCollision(bullet, currentWall)) {
+            console.log("light hit");
+            this._app.stage.removeChild(
+              currentWall.container,
+              bullet.container
+            );
+            // lightWalls.splice(wallIndex, 1);
+            this._walls.splice(this._walls.indexOf(currentWall), 1);
             this._tank.bullets.splice(index, 1);
-            this._walls.splice(wallIndex, 1);
-            this._app.stage.removeChild(wall.container,bullet.container);
+          }
+        });
+        armoredWalls.forEach((currentWall: any) => {
+          if (Collision.isCheckCollision(bullet, currentWall)) {
+            console.log("armored hit");
+
+            this._app.stage.removeChild(bullet.container);
+            this._tank.bullets.splice(index, 1);
           }
         });
       });
-    });
 
     if (!isCollision) {
       this._prevPositionTank = {

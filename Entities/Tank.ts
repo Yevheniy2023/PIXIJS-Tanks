@@ -1,8 +1,6 @@
 import { Bullet } from "./Bullet";
 import * as PIXI from "pixi.js";
 import { app } from "../app";
-import { wall3 } from "../Game";
-import { Collision } from "../Collision";
 
 export class Tank {
   private _container: PIXI.Container;
@@ -68,13 +66,6 @@ export class Tank {
         )
       );
       this._bullets.push(bullet);
-
-      // this._bullets.forEach((bullet : any) => {
-      //   if(Collision.isCheckCollision(bullet, wall3)){
-      //     console.log("bulllet colision");
-
-      //   }
-      // });
     }
   };
 }
